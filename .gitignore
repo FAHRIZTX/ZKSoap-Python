@@ -1,0 +1,4 @@
+dist/
+build/
+.mypy_cache/
+env/
