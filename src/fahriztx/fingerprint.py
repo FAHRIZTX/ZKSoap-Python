@@ -137,8 +137,3 @@ class Fingerprint(object):
     def __getValueFromTag(self, data, start, end):
         res = data.split(start)[1].split(end)[0]
         return res
-
-
-a = Fingerprint('103.77.206.42', 80, '987654')
-print(a.getStatus())
-print(a.getUserInfo('2'))
