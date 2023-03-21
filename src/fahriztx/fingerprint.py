@@ -1,17 +1,7 @@
+import datetime
 import socket
 from typing import Union, Optional, List
-from dataclasses import dataclass
-
-
-@dataclass
-class UserInfo:
-    pin: str
-    name: str
-    password: str
-    group: str
-    privilege: str
-    card: str
-    pin2: str
+from model import UserInfo, UserAttendance
 
 
 class Fingerprint(object):
@@ -33,7 +23,7 @@ class Fingerprint(object):
         try:
             self.__conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.__conn.connect((self.__ip, self.__port))
-        except Exception as e:
+        except Exception:
             raise Exception("Can't Connect")
 
     def getStatus(self) -> str:
@@ -53,12 +43,12 @@ class Fingerprint(object):
             {'key': "#PIN", 'value': pin}
         )
         data = self.__send(payload)
-        if not data:
+        if "<GetUserInfoResponse>" not in data:
             return None
 
         return self.__parseUserInfoData(data)
 
-    def __parseUserInfoData(self, data) -> List[UserInfo]:
+    def __parseUserInfoData(self, data: str) -> List[UserInfo]:
         datas = data.split("<Row>")
         datas.pop(0)
 
@@ -112,6 +102,96 @@ class Fingerprint(object):
             userData.append(user)
         return userData
 
+    def getAttendance(
+        self,
+        pin: Union[str, list] = "all",
+        date_start: Optional[str] = None,
+        date_end: Optional[str] = None
+    ):
+        self.connect()
+        if date_start is not None and date_end is None:
+            date_end = date_start
+
+        if isinstance(pin, list):
+            listpin = ""
+            for pinid in pin:
+                listpin += "<Arg><PIN>"+pinid+"</PIN></Arg>"
+            pin = listpin
+        else:
+            pin = "<Arg><PIN>"+pin+"</PIN></Arg>"
+
+        payload = self.__generatePayload(
+            'GetAttLog',
+            {'key': "#PIN", 'value': pin}
+        )
+        data = self.__send(payload)
+
+        if "<GetAttLogResponse>" not in data:
+            return None
+        return self.__parseAttendanceData(data, date_start, date_end)
+
+    def __parseAttendanceData(
+        self,
+        data: str,
+        date_start: Optional[str] = None,
+        date_end: Optional[str] = None
+    ) -> List[UserAttendance]:
+        datas = data.split("<Row>")
+        datas.pop(0)
+
+        userData = []
+        for dataRow in datas:
+            fid = self.__getValueFromTag(
+                dataRow,
+                "<PIN>",
+                "</PIN>"
+            )
+            dt = self.__getValueFromTag(
+                dataRow,
+                "<DateTime>",
+                "</DateTime>"
+            )
+            verified = self.__getValueFromTag(
+                dataRow,
+                "<Verified>",
+                "</Verified>"
+            )
+            status = self.__getValueFromTag(
+                dataRow,
+                "<Status>",
+                "</Status>"
+            )
+            workcode = self.__getValueFromTag(
+                dataRow,
+                "<WorkCode>",
+                "</WorkCode>"
+            )
+
+            if date_start is not None and date_end is not None:
+                DR = self.__dateRange(date_start, date_end)
+
+                dateCheck = dt.split(" ")[0];
+
+                if dateCheck in DR:
+                    user = UserAttendance(
+                        pin=fid,
+                        datetime=dt,
+                        verified=verified,
+                        status=status,
+                        workcode=workcode,
+                    )
+                    userData.append(user)
+            else:
+                user = UserAttendance(
+                    pin=fid,
+                    datetime=dt,
+                    verified=verified,
+                    status=status,
+                    workcode=workcode,
+                )
+                userData.append(user)
+        return userData 
+
     def __send(self, payload: bytes) -> Optional[str]:
         self.__conn.sendall(payload)  # type: ignore
         data = ''
@@ -121,9 +201,6 @@ class Fingerprint(object):
                 break
             data += part
         self.__conn.close()  # type: ignore
-        if "<GetUserInfoResponse>" not in data:
-            return None
-
         return data
 
     def __generatePayload(self, payload_name: str, data: dict) -> bytes:
@@ -137,3 +214,12 @@ class Fingerprint(object):
     def __getValueFromTag(self, data, start, end):
         res = data.split(start)[1].split(end)[0]
         return res
+
+    def __dateRange(self, startDate: str, endDate: str) -> List[str]:
+        start = datetime.datetime.strptime(startDate, "%Y-%m-%d")
+        end = datetime.datetime.strptime(endDate, "%Y-%m-%d")
+        date_generated = [
+            (start + datetime.timedelta(days=x)).strftime("%Y-%m-%d")
+            for x in range(0, (end-start).days+1)
+        ]
+        return date_generated
