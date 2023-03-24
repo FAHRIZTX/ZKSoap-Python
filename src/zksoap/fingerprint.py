@@ -1,11 +1,29 @@
 import datetime
 import socket
 from typing import Union, Optional, List
-from model import UserInfo, UserAttendance
+from dataclasses import dataclass
 
+
+@dataclass
+class UserInfo:
+    pin: str
+    name: str
+    password: str
+    group: str
+    privilege: str
+    card: str
+    pin2: str
+
+@dataclass
+class UserAttendance:
+    pin: str
+    datetime: str
+    verified: str
+    status: str
+    workcode: str
 
 class Fingerprint(object):
-    """docstring for Fingerprint"""
+
     payload = {
         'GetAttLog': '<GetAttLog><ArgComKey xsi:type=\"xsd:integer\">#COMKEY</ArgComKey>#PIN</GetAttLog>',  # noqa: E501
         'GetUserInfo': '<GetUserInfo><ArgComKey xsi:type=\"xsd:integer\">#COMKEY</ArgComKey>#PIN</GetUserInfo>',  # noqa: E501
@@ -14,7 +32,7 @@ class Fingerprint(object):
     def __init__(self, ip: str, port: int = 80, comkey: str = '') -> None:
         super(Fingerprint, self).__init__()
         self.__ip = ip
-        self.__port = port
+        self.__port = port if isinstance(port, int) else int(port)
         self.__comkey = comkey
         self.__conn = None
         self.connect()

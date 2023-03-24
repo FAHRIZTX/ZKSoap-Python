@@ -1,14 +1,17 @@
-from setuptools import find_packages, setup
+import setuptools
 
-setup(
+with open("README.md", "r", encoding = "utf-8") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
    name='zksoap',
-   packages={"zksoap": "src/fahriztx"},
-   version='0.1.0',
-   description='A PHP Library For Manage Data From Fingerprint Machine with SOAP Protocol',
+   version='0.0.1',
    author='Muhammad Fahri',
-   license='MIT',
-   install_requires=[],
-   setup_requires=['pytest-runner'],
-   tests_require=['pytest'],
-   test_suite='test',
+   author_email='admin+tech@fahriztx.dev',
+   long_description = long_description,
+   long_description_content_type = "text/markdown",
+   package_dir = {"": "src"},
+   packages = setuptools.find_packages(where="src"),
+   python_requires = ">=3.6",
+   license='MIT'
 )

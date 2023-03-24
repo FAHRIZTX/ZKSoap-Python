@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: zksoap
+Version: 0.0.1
+Author: Muhammad Fahri
+Author-email: admin+tech@fahriztx.dev
+License: MIT
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+ZK Soap Python Library
+======
+
+A Python Library For Manage Data From Fingerprint Machine with SOAP Protocol
+
+## UNDER DEVELOP

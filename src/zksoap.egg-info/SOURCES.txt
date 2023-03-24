@@ -1,0 +1,9 @@
+LICENSE
+README.md
+setup.py
+src/zksoap/__init__.py
+src/zksoap/fingerprint.py
+src/zksoap.egg-info/PKG-INFO
+src/zksoap.egg-info/SOURCES.txt
+src/zksoap.egg-info/dependency_links.txt
+src/zksoap.egg-info/top_level.txt
