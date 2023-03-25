@@ -41,18 +41,18 @@ machine = Fingerprint('192.168.1.175', '80', '123456')
 print("Machine Status : "+machine.getStatus()) # connected | disconnected
 
 # get all log data
-print(machine.getAttendance()); # return List of Attendance Log
+print(machine.getAttendance()) # return List of Attendance Log
 
 # get all log data with date
-print(machine.getAttendance('all', '2022-05-01')); # return List of Attendance Log
+print(machine.getAttendance('all', '2022-05-01')) # return List of Attendance Log
 
 # get all log data with date range
-print(machine.getAttendance('all', '2022-05-01', '2022-05-10')); # return List of Attendance Log
+print(machine.getAttendance('all', '2022-05-01', '2022-05-10')) # return List of Attendance Log
 
 # get specific pin log data
-print(machine.getAttendance('1')); # return List of Attendance Log
+print(machine.getAttendance('1')) # return List of Attendance Log
 # OR List
-print(machine.getAttendance(['1', '2'])); # return List of Attendance Log
+print(machine.getAttendance(['1', '2'])) # return List of Attendance Log
 
 ```
 
@@ -63,18 +63,18 @@ print(machine.getAttendance(['1', '2'])); # return List of Attendance Log
 from zksoap import Fingerprint
 
 # initial
-machine = Fingerprint('192.168.1.175', '80', '123456');
+machine = Fingerprint('192.168.1.175', '80', '123456')
 
 # get machine status
 print("Machine Status : "+machine.getStatus()) # connected | disconnected
 
 # get all user data
-print(machine.getUserInfo()); # return List of User Info Data
+print(machine.getUserInfo()) # return List of User Info Data
 
 # get specific pin user data
-print(machine.getUserInfo('1')); # return List of User Info Data
+print(machine.getUserInfo('1')) # return List of User Info Data
 # OR List
-print(machine.getUserInfo(['1', '2'])); # return List of User Info Data
+print(machine.getUserInfo(['1', '2'])) # return List of User Info Data
 
 ```
 

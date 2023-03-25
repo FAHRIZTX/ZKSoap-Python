@@ -14,6 +14,7 @@ class UserInfo:
     card: str
     pin2: str
 
+
 @dataclass
 class UserAttendance:
     pin: str
@@ -21,6 +22,7 @@ class UserAttendance:
     verified: str
     status: str
     workcode: str
+
 
 class Fingerprint(object):
 
@@ -34,7 +36,6 @@ class Fingerprint(object):
         self.__ip = ip
         self.__port = port if isinstance(port, int) else int(port)
         self.__comkey = comkey
-        self.__conn = None
         self.connect()
 
     def connect(self) -> None:
@@ -47,7 +48,7 @@ class Fingerprint(object):
     def getStatus(self) -> str:
         return 'connected' if self.__conn else 'disconnected'
 
-    def getUserInfo(self, pin: Union[str, list] = "all") -> Optional[list]:
+    def getUserInfo(self, pin: Union[str, list] = "all") -> List[UserInfo]:
         self.connect()
         if isinstance(pin, list):
             listpin = ""
@@ -61,8 +62,8 @@ class Fingerprint(object):
             {'key': "#PIN", 'value': pin}
         )
         data = self.__send(payload)
-        if "<GetUserInfoResponse>" not in data:
-            return None
+        if data and "<GetUserInfoResponse>" not in data:
+            return []
 
         return self.__parseUserInfoData(data)
 
@@ -188,7 +189,7 @@ class Fingerprint(object):
             if date_start is not None and date_end is not None:
                 DR = self.__dateRange(date_start, date_end)
 
-                dateCheck = dt.split(" ")[0];
+                dateCheck = dt.split(" ")[0]
 
                 if dateCheck in DR:
                     user = UserAttendance(
@@ -208,9 +209,9 @@ class Fingerprint(object):
                     workcode=workcode,
                 )
                 userData.append(user)
-        return userData 
+        return userData
 
-    def __send(self, payload: bytes) -> Optional[str]:
+    def __send(self, payload: bytes) -> str:
         self.__conn.sendall(payload)  # type: ignore
         data = ''
         while True:
