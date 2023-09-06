@@ -2,7 +2,7 @@ import datetime
 import socket
 from typing import Union, Optional, List
 from dataclasses import dataclass
-
+import json
 
 @dataclass
 class UserInfo:
@@ -242,3 +242,18 @@ class Fingerprint(object):
             for x in range(0, (end-start).days+1)
         ]
         return date_generated
+        
+class UserInfoEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, UserInfo):
+            return {
+                "pin": obj.pin,
+                "name": obj.name,
+                "password": obj.password,
+                "group": obj.group,
+                "privilege": obj.privilege,
+                "card": obj.card,
+                "pin2": obj.pin2
+            }
+        return super(UserInfoEncoder, self).default(obj)
+
