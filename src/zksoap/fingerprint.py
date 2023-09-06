@@ -256,4 +256,16 @@ class UserInfoEncoder(json.JSONEncoder):
                 "pin2": obj.pin2
             }
         return super(UserInfoEncoder, self).default(obj)
+        
+class UserAttendanceEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, UserAttendance):
+            return {
+                "pin": obj.pin,
+                "datetime": obj.datetime,
+                "verified": obj.verified,
+                "status": obj.status,
+                "workcode": obj.workcode
+            }
+        return super(UserAttendanceEncoder, self).default(obj)
 
