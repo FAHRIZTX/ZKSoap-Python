@@ -54,6 +54,15 @@ print(machine.getAttendance('1')) # return List of Attendance Log
 # OR List
 print(machine.getAttendance(['1', '2'])) # return List of Attendance Log
 
+# get exported json format
+user_attendance_data = machine.getAttendance()
+json_data = json.dumps(user_attendance_data, cls=UserAttendanceEncoder, indent=4)
+file_path = 'user_attendance2.json'
+with open(file_path, 'w') as file:
+    file.write(json_data)
+
+print(f"JSON data for user attendance saved to {file_path}")
+
 ```
 
 * Get User Information
@@ -75,6 +84,16 @@ print(machine.getUserInfo()) # return List of User Info Data
 print(machine.getUserInfo('1')) # return List of User Info Data
 # OR List
 print(machine.getUserInfo(['1', '2'])) # return List of User Info Data
+
+# get exported json format
+decoded_data = machine.getUserInfo()
+data_dict = {"data": decoded_data}
+json_data = json.dumps(data_dict, indent=4, cls=UserInfoEncoder)
+file_path = 'user_info2.json'
+with open(file_path, 'w') as file:
+    file.write(json_data)
+
+print(f"JSON data saved to {file_path}")
 
 ```
 
