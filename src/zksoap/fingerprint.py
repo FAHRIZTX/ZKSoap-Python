@@ -215,7 +215,7 @@ class Fingerprint(object):
         self.__conn.sendall(payload)  # type: ignore
         data = ''
         while True:
-            part = self.__conn.recv(1024).decode()  # type: ignore
+            part = self.__conn.recv(1024).decode('iso-8859-1')  # type: ignore
             if not part:
                 break
             data += part
